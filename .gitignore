@@ -1,3 +1,4 @@
+# Local environments, builds and secrets
 .venv/
 venv/
 __pycache__/
@@ -5,4 +6,19 @@ __pycache__/
 node_modules/
 dist/
 .env
-*.pyc
+.env.*
+!.env.example
+*.py[cod]
+
+# Keep operational notes, raw downloads, logs and instructions locally
+no-push/
+**/no-push/
+
+# Data are published only after deliberate source review; default is private
+backend/data/*.csv
+backend/data/*.json
+!backend/data/.gitkeep
+
+# Local reports
+.coverage
+htmlcov/
