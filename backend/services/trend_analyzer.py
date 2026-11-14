@@ -52,18 +52,19 @@ def analyze_dataset(dataset, min_complete_years=8):
     slope=float(regression.slope)
     for p in annual:
         p["fitted"] = round(float(regression.intercept + slope * p["year"]),9)
+    slope_unit = {"temperature":"degC/year", "rainfall":"mm/year²", "soil_moisture":f"{unit}/year"}[variable]
     significant = bool(mk_p < 0.05)
     direction = "increasing" if sen.slope > 0 else "decreasing" if sen.slope < 0 else "flat"
     label = "statistically significant" if significant else "not statistically significant"
     return {
         "dataset_id": metadata["id"], "variable":variable, "region":metadata["region"],
-        "unit": ("mm/year" if variable == "rainfall" else unit), "annual_aggregation":method,
+        "unit": ("mm/year" if variable == "rainfall" else unit), "annual_aggregation":method,"slope_unit":slope_unit,
         "included_years":len(full_years), "first_year":x[0], "last_year":x[-1],
         "excluded_years":excluded, "annual_series":annual,
         "linear_regression":{"slope_per_year":slope,"intercept":float(regression.intercept),"r_squared":float(regression.rvalue**2),"p_value":float(regression.pvalue),"standard_error":float(regression.stderr)},
         "mann_kendall":{"kendall_tau":float(tau),"p_value":float(mk_p),"significant_at_0_05":significant,"method":"Kendall rank test on annual values (MK-style, uncorrected)"},
         "sen_slope":{"slope_per_year":float(sen.slope),"confidence_interval_95":{"lower":float(sen.low_slope),"upper":float(sen.high_slope)}},
-        "interpretation":f"For {metadata['region']}, the complete-year {variable} series ({x[0]}–{x[-1]}) shows a {direction} Sen slope of {sen.slope:.4f} {('mm/year' if variable=='rainfall' else unit)}/year; the annual rank trend is {label} (two-sided p={mk_p:.4g}). This is not a causal attribution or a national estimate.",
+        "interpretation":f"For {metadata['region']}, the complete-year {variable} series ({x[0]}–{x[-1]}) shows a {direction} Sen slope of {sen.slope:.4f} {slope_unit}; the annual rank trend is {label} (two-sided p={mk_p:.4g}). This is not a causal attribution or a national estimate.",
         "limitations":["Annual aggregation excludes every incomplete year (including 2025 if only January is available).","The rank-test p-value does not adjust for serial autocorrelation; significant results require cautious interpretation.","Statistical trend does not imply causation or prove a climate driver.","Data coverage and spatial grid limit representativeness; see source metadata."],
         "provenance":{"source_url":metadata["source_url"],"source_file_sha256":metadata.get("source_file_sha256"),"verification_status":metadata.get("verification_status"),"coverage_warning":metadata.get("coverage_warning")}
     }
