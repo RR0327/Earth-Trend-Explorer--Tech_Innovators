@@ -35,6 +35,11 @@ def investigate(payload):
     unit = payload.get('unit')
     region = payload.get('region')
     source_url = payload.get('source_url')
+    from services.regions import validate_bbox, RegionError
+    requested_bbox = payload.get('requested_bbox')
+    if requested_bbox is not None:
+        try: requested_bbox = validate_bbox(requested_bbox)
+        except RegionError as exc: raise ExplorationValidationError(str(exc)) from exc
     if variable not in PRODUCTS or product not in PRODUCTS[variable]:
         raise ExplorationValidationError('Unsupported variable and NASA product combination')
     if unit not in PRODUCTS[variable][product]:
@@ -80,6 +85,8 @@ def investigate(payload):
         'verification_status':'visitor_supplied_source_not_independently_authenticated',
         'coverage_warning':'Coverage is declared by the visitor; validate the actual Giovanni Data Bounding Box before scientific interpretation.',
         'source_file_sha256':None,
+        'requested_bbox':requested_bbox,
+        'spatial_method':'visitor_declared_giovanni_area_series',
     }
     try:
         trend = analyze_dataset({'metadata':metadata, 'observations':observations})
