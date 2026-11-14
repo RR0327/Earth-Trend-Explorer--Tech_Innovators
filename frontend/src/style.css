@@ -83,3 +83,43 @@
 @media(max-width:550px){.footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 12px}.footer-primary>p{max-width:none}.footer{padding-top:26px}.chart-panel .section-heading{flex-direction:column;align-items:stretch}.chart-panel .segmented{width:100%;justify-content:center}.chart-panel .segmented button{flex:1}.chart-wrap{height:250px;min-height:250px}.chart-subhead{flex-wrap:wrap}.footer-bottom{font-size:10px}.question{min-height:0}}
 @media(max-width:360px){.content{padding:10px}.panel{padding:13px}.hero-copy{padding:23px 16px}.hero h1{font-size:30px}.metrics-grid{grid-template-columns:1fr}.control-heading h2,.section-heading h2{font-size:18px}.status-pill{white-space:normal}.chart-wrap{height:220px;min-height:220px}.footer-links{grid-template-columns:1fr}.footer{margin-top:25px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Challenge-aligned investigation workflow: accessible, responsive, retains EarthTrace visual language. */
+.investigator{margin-top:24px;scroll-margin-top:30px;padding:29px}
+.lab-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:22px}
+.lab-header .eyebrow{display:flex;align-items:center;gap:8px}
+.lab-header h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(21px,2.3vw,30px);letter-spacing:-.6px;color:var(--text-primary);margin:9px 0 8px}
+.lab-header p{color:var(--text-muted);font-size:13px;line-height:1.75;max-width:780px}
+.lab-top-icon{flex-shrink:0;width:52px;height:52px;border:1px solid var(--edge);border-radius:15px;display:grid;place-items:center;color:var(--accent);background:var(--inset-bg)}
+.investigation-path{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:18px 0 24px}
+.investigation-path span{display:flex;align-items:center;gap:8px;background:var(--inset-bg);border:1px solid var(--edge);padding:11px 12px;border-radius:9px;color:var(--text-muted);font-size:11px;font-weight:700}
+.investigation-path b{color:var(--accent);font-size:13px}
+.investigator-form{display:grid;gap:18px}
+.lab-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.lab-field{min-width:0;display:flex;flex-direction:column;gap:8px}
+.lab-field>label{font-size:11px;font-weight:750;letter-spacing:.3px;color:var(--text-primary);display:flex;align-items:center;gap:8px}
+.lab-field>input,.lab-input-wrap select{width:100%;max-width:100%;min-height:45px;background:var(--inset-bg);border:1px solid var(--edge);border-radius:10px;color:var(--text-primary);padding:10px 13px;font:inherit;font-size:12px;outline-offset:3px}
+.lab-field>input::placeholder{color:var(--text-muted)}
+.lab-input-wrap{position:relative}.lab-input-wrap select{appearance:none;padding-right:35px}.lab-input-wrap>svg{position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text-muted)}
+.field-caption{color:var(--text-muted);font-size:11px;line-height:1.55}
+.lab-upload{background:var(--inset-bg);border:1px dashed var(--accent);border-radius:13px;min-height:118px;display:grid;align-items:center}
+.lab-upload label{display:flex;flex-direction:column;align-items:center;gap:7px;padding:20px;cursor:pointer;text-align:center;color:var(--text-primary)}
+.lab-upload svg{color:var(--accent)}.lab-upload strong{font-size:13px;overflow-wrap:anywhere}.lab-upload span{color:var(--text-muted);font-size:11px}
+.lab-upload input{width:100%;max-width:340px;margin:0 auto 15px;color:var(--text-muted);font-size:11px}
+.lab-spatial,.lab-preview,.lab-error,.lab-success,.custom-warning{display:flex;align-items:flex-start;gap:10px;border-radius:10px;padding:12px 14px;font-size:12px;line-height:1.6}
+.lab-spatial{background:var(--inset-bg);color:var(--text-muted);border:1px solid var(--edge)}.lab-spatial svg{color:var(--accent);flex-shrink:0}
+.lab-preview,.lab-success{background:rgba(35,174,151,.1);color:var(--text-primary);border:1px solid rgba(35,174,151,.3)}
+.lab-preview svg,.lab-success svg{color:var(--accent);flex-shrink:0}
+.lab-error{background:rgba(226,92,78,.12);border:1px solid rgba(226,92,78,.3);color:var(--text-primary)}.lab-error svg{color:#ef877b;flex-shrink:0}
+.lab-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.lab-submit,.lab-reset{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:45px;padding:12px 18px;border-radius:10px;font-size:12px;font-weight:750}
+.lab-submit{background:#14a7a9;color:white;border:1px solid #38b7bc}.lab-submit:hover{background:#0b8388}.lab-submit:disabled{opacity:.55;cursor:not-allowed}
+.lab-reset{background:var(--inset-bg);color:var(--text-primary);border:1px solid var(--edge)}.lab-reset:hover{border-color:var(--accent)}
+.lab-guidance{margin-top:22px;border:1px solid var(--edge);border-radius:13px;padding:16px;display:flex;gap:12px;background:var(--inset-bg)}
+.lab-guidance-icon{flex-shrink:0;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:rgba(35,174,151,.13);color:var(--accent)}
+.lab-guidance strong{font-size:12px;color:var(--text-primary)}.lab-guidance p{font-size:12px;line-height:1.8;margin:7px 0 0;color:var(--text-muted)}
+.lab-guidance a{color:var(--accent);display:inline-flex;align-items:center;gap:2px;font-weight:750}
+.lab-integrity{font-size:11px;line-height:1.7;color:var(--text-muted);display:flex;align-items:flex-start;gap:8px;margin:14px 0 0}.lab-integrity svg{flex-shrink:0;margin-top:1px}
+.custom-warning{margin:20px 0;background:var(--inset-bg);border:1px solid var(--accent);color:var(--text-primary)}.custom-warning svg{color:var(--accent);flex-shrink:0}.custom-warning button{background:transparent;border:0;text-decoration:underline;color:var(--accent);cursor:pointer;font-weight:750}
+@media(max-width:900px){.investigation-path{grid-template-columns:repeat(2,minmax(0,1fr))}.investigator{padding:22px}}
+@media(max-width:560px){.investigator{padding:16px}.lab-row{grid-template-columns:1fr}.investigation-path{grid-template-columns:1fr 1fr;gap:6px}.investigation-path span{padding:10px 7px;font-size:10px;flex-wrap:wrap}.lab-header p{font-size:12px}.lab-top-icon{display:none}.lab-actions>*{width:100%}.lab-upload label{padding:17px 8px}}
