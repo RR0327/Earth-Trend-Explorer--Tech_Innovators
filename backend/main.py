@@ -24,11 +24,11 @@ async def security_headers(request, call_next):
 
 @app.get("/")
 def root():
-    return {"name": "Bangladesh Earth Trend Explorer API", "status": "running"}
+    return {"name": "EarthTrend Detective API", "status": "running"}
 
 @app.get("/api/health")
 def health():
-    return {"status": "healthy", "phase": 3}
+    return {"status": "healthy", "service": "earthtrend-detective"}
 
 @app.get("/api/ready")
 def ready():
@@ -152,3 +152,37 @@ async def nasa_power_point(latitude: float, longitude: float, start_year: int = 
     from services.nasa_power import retrieve,PowerError
     try:return await retrieve(latitude,longitude,start_year,end_year)
     except PowerError as exc:raise HTTPException(422,str(exc))
+
+
+@app.get('/api/catalog/products')
+def research_product_catalog():
+    from services.research_catalog import products
+    return products(DATA_DIR)
+
+
+@app.post('/api/data/preview')
+async def research_data_preview(request: Request):
+    from services.research_catalog import preview, PreviewError
+    if request.headers.get('content-type', '').split(';')[0].lower() != 'application/json':
+        raise HTTPException(status_code=415, detail='Content-Type must be application/json')
+    payload = await request.body()
+    if len(payload) > 8192:
+        raise HTTPException(status_code=413, detail='Preview payload exceeds 8 KB')
+    import json
+    try:
+        parameters = json.loads(payload)
+    except (UnicodeDecodeError, ValueError):
+        raise HTTPException(status_code=400, detail='Invalid JSON')
+    try:
+        return preview(DATA_DIR, parameters)
+    except PreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.get('/api/regions/{region_id}')
+def region_detail(region_id: str):
+    from services.regions import listing
+    matches = [r for r in listing() if r['id'].casefold() == region_id.casefold()]
+    if not matches:
+        raise HTTPException(status_code=404, detail='Unknown region preset')
+    return {**matches[0], 'note':'Approximate preset only. Not a surveyed boundary, national mean, or guaranteed NASA coverage.'}
