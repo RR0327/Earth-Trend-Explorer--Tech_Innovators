@@ -41,8 +41,10 @@ export default function ResearchCatalog({apiBase}) {
     {catalog&&<><div className="research-product-grid">{catalog.products.map(product=><article className="research-product" key={product.id}>
       <div className="research-product-name"><Database size={17}/><strong>{product.family}</strong></div>
       <div className="research-product-variable">{product.variable.replace('_',' ')} · {product.temporal_resolution}</div>
+      <p className="research-product-variable">Product: {product.short_name || 'Product-specific'} · Version: {product.product_version} · Source unit: {product.source_unit}</p>
       <div className="research-product-state"><CheckCircle2 size={14}/>{productStatus(product)}</div>
       <p>{product.note}</p>
+      {product.integration?.includes('local_gridded_file_extraction')&&<p className="research-product-variable">Local gridded NetCDF extraction available after sourcing authentic NASA data; no live area extraction or dataset auto-download.</p>}
       <a href={product.documentation_url} target="_blank" rel="noreferrer">NASA product documentation <ExternalLink size={13}/></a>
     </article>)}</div>
       {catalog.products.some(p=>p.installed_dataset_ids?.length>0)&&<div className="research-preview-controls">
