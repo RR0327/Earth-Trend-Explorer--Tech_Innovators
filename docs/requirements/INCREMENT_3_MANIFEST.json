@@ -1,0 +1,29 @@
+{
+  "baseline": "EarthTrend_Detective_Master_Spec_Increment2_Full_Repository.zip",
+  "status": "Increment 3 source changes created, independent deployment pending",
+  "modified_or_new": [
+    "backend/main.py",
+    "backend/services/country_boundaries.py",
+    "backend/services/extract_grid_cli.py",
+    "backend/tests/test_country_boundaries.py",
+    "frontend/src/main.jsx",
+    "frontend/src/GlobalExplorer.jsx",
+    "frontend/src/SiteFooter.jsx",
+    "frontend/src/footer-content.mjs",
+    "frontend/src/footer-content.test.mjs",
+    "frontend/src/boundary-map.mjs",
+    "frontend/src/boundary-map.test.mjs",
+    "frontend/src/integration.test.mjs",
+    "frontend/src/style.css"
+  ],
+  "country_features": 172,
+  "country_reference_sha256": "1435df317ddf18610e66c26f208a606e17566a205e8aef0104df427dee0f52c8",
+  "submitted_snapshot": "not modified",
+  "nasa_curated_data": "not modified",
+  "test_results": {
+    "backend": 81,
+    "frontend": 44
+  },
+  "build_status": "not_verified_in_container; run npm install and npm run build on Windows",
+  "country_selection": "Natural Earth polygon outline available from API, custom rectangle remains available"
+}
