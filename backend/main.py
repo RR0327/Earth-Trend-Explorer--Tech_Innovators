@@ -7,7 +7,7 @@ from services.dataset_store import list_datasets, load_dataset
 from services.deployment_config import allowed_origins, is_production
 from services.release_checks import dataset_readiness
 
-app = FastAPI(title="Bangladesh Earth Trend Explorer", version="0.6.0")
+app = FastAPI(title="EarthTrend Detective API", version="1.0.0")
 origins = allowed_origins()
 app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"], allow_headers=["*"])
 DATA_DIR = Path(os.getenv("BETE_DATA_DIR", str(Path(__file__).resolve().parent / "data")))
@@ -91,3 +91,64 @@ async def explore(request: Request):
         return investigate(payload)
     except ExplorationValidationError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
+
+
+@app.get("/api/regions")
+def supported_regions(q: str = ""):
+    """Search approximate country bounding-box presets, not actual gridded NASA data."""
+    from services.regions import listing
+    return {"regions":listing(q[:100]),"note":"Presets are approximate geographic boxes for preparing a Giovanni export; they are not measured coverage, true country boundaries, or available analyses."}
+
+
+@app.post("/api/compare")
+async def compare_regions(request: Request):
+    """Compare two independent real uploaded series; refuse incompatible observations."""
+    from services.exploration import investigate, ExplorationValidationError
+    from services.regions import RegionError
+    from fastapi.responses import JSONResponse
+    if request.headers.get('content-type','').split(';')[0].lower()!='application/json':
+        raise HTTPException(415, 'Content-Type must be application/json')
+    body=await request.body()
+    if len(body)>240_000: raise HTTPException(413,'Payload exceeds 240 KB')
+    import json
+    try: payload=json.loads(body)
+    except (ValueError,UnicodeDecodeError): raise HTTPException(400,'Invalid JSON')
+    if not isinstance(payload,dict) or not isinstance(payload.get('studies'),list) or len(payload['studies'])!=2:
+        raise HTTPException(422,'Exactly two study series are required')
+    try:
+        a,b=[investigate(x) for x in payload['studies']]
+    except (ExplorationValidationError,RegionError) as exc:
+        raise HTTPException(422,str(exc))
+    am,bm=a['dataset']['metadata'],b['dataset']['metadata'];at,bt=a['trend'],b['trend']
+    if am['variable']!=bm['variable'] or am['product']!=bm['product'] or am['normalized_unit']!=bm['normalized_unit']:
+        raise HTTPException(422,'Both series must share variable, NASA product, and normalized unit')
+    if am['region'].casefold()==bm['region'].casefold():
+        raise HTTPException(422,'Provide two distinct study-area descriptions')
+    ay={v['year']:v['value'] for v in at['annual_series']}; by={v['year']:v['value'] for v in bt['annual_series']}
+    shared=sorted(set(ay)&set(by))
+    if len(shared)<8: raise HTTPException(422,'At least eight common complete annual observations are required')
+    # Refit on exactly the same years; do not compare incompatible spans.
+    from scipy.stats import kendalltau,theilslopes,linregress
+    x=list(shared); results=[]
+    for original, values in ((a,ay),(b,by)):
+        y=[values[year] for year in x]
+        if len(set(y))<2: raise HTTPException(422,'One shared-year series is constant')
+        linear=linregress(x,y);sen=theilslopes(y,x);tau,p=kendalltau(x,y)
+        results.append({'region':original['dataset']['metadata']['region'],
+                        'sen_slope_per_year':float(sen.slope), 'linear_slope_per_year':float(linear.slope),
+                        'kendall_tau':float(tau),'p_value':float(p),'significant_at_0_05':bool(p<.05),
+                        'annual_series':[{'year':year,'value':values[year]} for year in shared]})
+    return {'comparison_status':'visitor_supplied_not_independently_authenticated',
+            'product':am['product'],'variable':am['variable'], 'annual_unit':at['unit'],
+            'shared_first_year':shared[0],'shared_last_year':shared[-1],'shared_year_count':len(shared),
+            'studies':results,'difference_sen_slope_per_year':results[0]['sen_slope_per_year']-results[1]['sen_slope_per_year'],
+            'limitations':['Both uploaded series must represent the stated areas; coverage is not verified by URL alone.',
+                           'Approximate country bounding boxes are not national-boundary means.',
+                           'Annual Kendall tests are not corrected for serial dependence; comparisons do not prove causation.']}
+
+@app.get('/api/nasa-power/point')
+async def nasa_power_point(latitude: float, longitude: float, start_year: int = 2001, end_year: int = 2024):
+    """Opt-in global T2M data at ONE point. Never claim a country aggregate."""
+    from services.nasa_power import retrieve,PowerError
+    try:return await retrieve(latitude,longitude,start_year,end_year)
+    except PowerError as exc:raise HTTPException(422,str(exc))
