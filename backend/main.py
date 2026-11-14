@@ -206,3 +206,16 @@ def geospatial_capabilities():
             'The area-weighting transformation approximates irregular polygon edges; results require scientific validation for high-precision studies.'
         ]
     }
+
+
+@app.get('/api/geography/countries')
+def country_boundary_catalog(q: str = '', limit: int = 200):
+    from services.country_boundaries import list_boundaries
+    return {'regions':list_boundaries(q,limit),'boundary_source':'Natural Earth low-resolution (public domain)',
+            'note':'Generalized actual polygon boundaries; NOT evidence that NASA gridded data have been extracted.'}
+
+@app.get('/api/geography/countries/{country_code}')
+def country_boundary_geometry(country_code: str):
+    from services.country_boundaries import get_boundary
+    try: return get_boundary(country_code)
+    except KeyError: raise HTTPException(status_code=404,detail='Country boundary not present in packaged reference data')
