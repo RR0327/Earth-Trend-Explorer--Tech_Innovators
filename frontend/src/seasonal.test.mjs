@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {seasonalClimatology} from './science.mjs';
+test('climatology uses only actual recorded values',()=>{const d={observations:[{date:'2020-01',value:5},{date:'2021-01',value:7},{date:'2020-02',value:9}]};const x=seasonalClimatology(d);assert.equal(x[0].mean,6);assert.equal(x[0].count,2);assert.equal(x[1].mean,9);assert.equal(x[2].mean,null)});
