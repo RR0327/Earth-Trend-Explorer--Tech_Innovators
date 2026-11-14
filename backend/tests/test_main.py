@@ -4,7 +4,7 @@ import main
 client = TestClient(main.app)
 
 def test_health():
-    assert client.get("/api/health").json() == {"status": "healthy", "phase": 3}
+    assert client.get("/api/health").json() == {"status": "healthy", "service": "earthtrend-detective"}
 
 def test_root():
     assert client.get("/").json()["status"] == "running"
