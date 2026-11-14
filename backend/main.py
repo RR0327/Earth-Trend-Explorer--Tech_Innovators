@@ -186,3 +186,23 @@ def region_detail(region_id: str):
     if not matches:
         raise HTTPException(status_code=404, detail='Unknown region preset')
     return {**matches[0], 'note':'Approximate preset only. Not a surveyed boundary, national mean, or guaranteed NASA coverage.'}
+
+
+@app.get('/api/geospatial/capabilities')
+def geospatial_capabilities():
+    """Declare exactly what regional NetCDF extraction currently supports."""
+    from services.grid_extraction import PRODUCTS
+    return {
+        'input':'trusted local NetCDF with time/lat/lon rectilinear grid',
+        'geometry':'GeoJSON Polygon or MultiPolygon EPSG:4326, no antimeridian crossing',
+        'method':'fractional_grid_area_weighted_mean',
+        'products':[{'id':pid, **spec} for pid,spec in PRODUCTS.items()],
+        'runtime_mode':'local_cli_only',
+        'public_upload_enabled':False,
+        'limitations':[
+            'No country/admin boundary catalogue or automatic NASA download is implied.',
+            'Only genuine gridded source files can be spatially aggregated; Giovanni area-average time series cannot be remasked.',
+            'NetCDF metadata and file hashes are retained; independent NASA source authenticity requires provenance review.',
+            'The area-weighting transformation approximates irregular polygon edges; results require scientific validation for high-precision studies.'
+        ]
+    }
