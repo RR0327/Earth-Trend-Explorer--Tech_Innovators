@@ -9,16 +9,17 @@ dist/
 .env.*
 !.env.example
 *.py[cod]
-
 # Keep operational notes, raw downloads, logs and instructions locally
 no-push/
 **/no-push/
-
 # Data are published only after deliberate source review; default is private
 backend/data/*.csv
 backend/data/*.json
 !backend/data/.gitkeep
-
 # Local reports
 .coverage
 htmlcov/
+
+# Phase 3: explicitly approved and curated NASA Giovanni monthly dataset
+!backend/data/merra2_selected_area_temperature_2000_2025.csv
+!backend/data/merra2_selected_area_temperature_2000_2025.json
