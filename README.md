@@ -1,8 +1,10 @@
-# EarthTrace | Earth System Trend Detective
+# EarthTrend Detective (EarthTrace Interface) | NASA Earth Science
 
 **NASA-powered, public environmental trend investigation** — independent NASA Space Apps Challenge project, not an official NASA site.
 
 EarthTrace uses authentic NASA Earth science observations to answer: **what is changing, where, by how much, and is the observed trend statistically significant?**
+
+**Master specification alignment:** see [Requirements Coverage and Implementation Status](docs/requirements/MASTER_SPECIFICATION_ALIGNMENT.md). The current increment adds verified product availability and data preview, not global polygon processing. Section 31 of the supplied specification is deferred until core V1/V2 acceptance.
 
 ### What works
 
