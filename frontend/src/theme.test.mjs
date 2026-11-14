@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {THEMES,nextTheme,isTheme,getInitialTheme,persistTheme} from './theme.mjs';
+test('both supported themes are available',()=>assert.deepEqual([...THEMES],['dark','light']));
+test('theme toggles in both directions',()=>{assert.equal(nextTheme('dark'),'light');assert.equal(nextTheme('light'),'dark');});
+test('unexpected theme value is not accepted',()=>assert.equal(isTheme('invisible'),false));
+test('server-side theme initialization defaults safely',()=>assert.equal(getInitialTheme(),'dark'));
+test('theme persistence gracefully handles missing storage',()=>assert.equal(persistTheme('light'),false));
+test('theme persistence never writes invalid values',()=>assert.equal(persistTheme('invalid'),false));
+test('browser preference is honored when no setting saved',()=>{globalThis.window={localStorage:{getItem:()=>null},matchMedia:()=>({matches:true})};try{assert.equal(getInitialTheme(),'light');}finally{delete globalThis.window;}});
+test('saved theme wins over browser preference',()=>{globalThis.window={localStorage:{getItem:()=> 'dark'},matchMedia:()=>({matches:true})};try{assert.equal(getInitialTheme(),'dark');}finally{delete globalThis.window;}});
+test('selected theme is written to storage',()=>{let saved='';globalThis.window={localStorage:{setItem:(key,val)=>{saved=key+'='+val;}}};try{assert.equal(persistTheme('light'),true);assert.equal(saved,'earthtrace-theme=light');}finally{delete globalThis.window;}});

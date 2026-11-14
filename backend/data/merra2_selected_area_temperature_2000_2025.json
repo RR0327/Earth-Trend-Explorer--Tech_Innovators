@@ -1,0 +1,36 @@
+{
+  "id": "merra2_selected_area_temperature_2000_2025",
+  "variable": "temperature",
+  "product": "MERRA-2",
+  "source_url": "https://giovanni.gsfc.nasa.gov/giovanni/",
+  "region": "Selected area in eastern Bangladesh (NOT Bangladesh national average); requested bbox 90.6444E, 22.9127N to 91.3915E, 23.5279N; sampled grid 91.25E, 23N to 91.25E, 23.5N",
+  "spatial_method": "area_mean",
+  "temporal_resolution": "monthly",
+  "unit": "K",
+  "retrieved_at": "2026-11-14",
+  "dataset_variable": "M2TMNXSLV v5.12.4 / T2M",
+  "requested_bbox": [
+    90.6444,
+    22.9127,
+    91.3915,
+    23.5279
+  ],
+  "sampled_grid_bounds": [
+    91.25,
+    23,
+    91.25,
+    23.5
+  ],
+  "coverage_warning": "Not a whole-Bangladesh estimate; selected Giovanni area intersects a narrow sampled data grid.",
+  "giovanni_reproduction_url": "https://giovanni.gsfc.nasa.gov/giovanni/#service=ArAvTs&starttime=2000-01-01T00:00:00Z&endtime=2025-01-31T23:59:59Z&bbox=90.6444,22.9127,91.3915,23.5279&data=M2TMNXSLV_5_12_4_T2M&portal=GIOVANNI&format=json",
+  "raw_csv_sha256": "da1bfe00504a5a4b1aba43a8c2b1f4fe4643d995d1bbe9c6e8b5229c67ca0912",
+  "raw_netcdf_sha256": "31b1caef542cffe3da4b521d0129381821a5bd7b7a30ec2f1fc1543cf16b3626",
+  "notes": "Data copied from user-supplied NASA Giovanni export; source is not independently fetched. January 2025 is partial calendar year and excluded from annual trend calculations.",
+  "normalized_unit": "degC",
+  "observation_count": 301,
+  "first_month": "2000-01",
+  "last_month": "2025-01",
+  "gaps": [],
+  "source_file_sha256": "beca24e5262e741986d68f9a7bfe3381b4b182bbd89b522a5d93400ac038974e",
+  "verification_status": "source_metadata_user_supplied_not_independently_verified"
+}

@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {number,changeDirection,significance,seriesFor,annualRange,safeExternalUrl,safeFilename} from './science.mjs';
+test('number formatting and missing data',()=>{assert.equal(number(0.009743), '0.0097');assert.equal(number(null),'N/A')});
+test('trend direction distinguishes positive negative and zero',()=>{assert.equal(changeDirection(.01),'Increasing');assert.equal(changeDirection(-.01),'Decreasing');assert.equal(changeDirection(0),'No directional change')});
+test('significance reads only backend boolean',()=>{assert.equal(significance({mann_kendall:{significant_at_0_05:false}}),'Not statistically significant');assert.equal(significance({mann_kendall:{significant_at_0_05:true}}),'Statistically significant');assert.equal(significance(null),'Undetermined')});
+test('series switch does not compute or fabricate values',()=>{const d={observations:[{date:'2020-01',value:22}]};const t={annual_series:[{year:2020,value:23,fitted:22.5}]};assert.deepEqual(seriesFor(d,t,'monthly'),d.observations);assert.deepEqual(seriesFor(d,t,'annual'),t.annual_series)});
+test('annual range from supplied years',()=>assert.equal(annualRange({first_year:2000,last_year:2024}),'2000–2024'));
+test('external source URLs must be secure',()=>{assert.equal(safeExternalUrl('javascript:alert(1)'),null);assert.equal(safeExternalUrl('https://giovanni.gsfc.nasa.gov/giovanni/'),'https://giovanni.gsfc.nasa.gov/giovanni/')});
+test('export file name is sanitized',()=>assert.equal(safeFilename('../NASA:temperature'), '_NASA_temperature'));
