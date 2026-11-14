@@ -153,3 +153,24 @@
 @media print{.main-navbar,.global-panel,.compare-panel,.investigator,.hero-cta,.export-button,.footer-links{display:none!important}.hero{height:auto;min-height:0}.hero-copy{padding:20px}.planet-scene{display:none}.content{padding:0}.panel,.metric,.question{break-inside:avoid}.app-shell{background:white}.hero,.panel{box-shadow:none}}
 .seasonal-panel{margin-top:24px;scroll-margin-top:90px}.season-chart{height:260px;margin-top:10px}.seasonal-panel .section-heading{margin-bottom:0}
 .geo-live{border:1px solid var(--accent);background:var(--selected-bg);color:var(--text-primary);border-radius:10px;padding:12px;font-weight:800;font-size:12px;line-height:1.5}.geo-live:hover:not(:disabled){background:var(--hover-bg)}
+
+/* Research dataset availability: preserve existing theme variables and layouts. */
+.research-catalog {scroll-margin-top:100px;}
+.research-product-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0;}
+.research-product {padding:18px;border-radius:14px;border:1px solid var(--border,#2f475b);background:var(--panel-soft,rgba(100,150,180,.05));min-width:0;}
+.research-product-name,.research-product-state {display:flex;align-items:center;gap:9px;}
+.research-product-name strong {font-size:1rem;}
+.research-product-variable {font-size:.84rem;opacity:.75;margin:7px 0;}
+.research-product-state {color:#24aba9;font-size:.82rem;font-weight:700;margin:10px 0;}
+.research-product p {font-size:.82rem;line-height:1.6;opacity:.8;}
+.research-product a {display:inline-flex;gap:7px;align-items:center;font-size:.82rem;overflow-wrap:anywhere;color:var(--accent,#31c6ce);}
+.research-refresh,.research-preview-controls button {display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 15px;border-radius:9px;border:1px solid var(--border,#4c6176);background:transparent;color:inherit;cursor:pointer;}
+.research-preview-controls {display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-top:16px;}
+.research-preview-controls label {font-size:.85rem;font-weight:700;}
+.research-preview-controls select {max-width:100%;min-width:0;flex:1 1 260px;padding:11px;border:1px solid var(--border,#4c6176);border-radius:9px;background:var(--panel,#152b41);color:inherit;}
+.research-preview-controls button {background:#2ecac7;color:#092636;border:0;font-weight:700;}
+.research-preview-controls button:disabled {opacity:.55;cursor:not-allowed;}
+.research-preview-output {display:grid;gap:8px;margin-top:14px;padding:16px;border:1px solid var(--border,#4c6176);border-radius:12px;font-size:.82rem;line-height:1.55;overflow-wrap:anywhere;}
+.research-preview-output strong {color:var(--accent,#30bdbd);}
+@media(max-width:900px){.research-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:590px){.research-product-grid{grid-template-columns:1fr}.research-preview-controls{align-items:stretch;flex-direction:column}.research-preview-controls select,.research-preview-controls button{width:100%;flex:auto}}
