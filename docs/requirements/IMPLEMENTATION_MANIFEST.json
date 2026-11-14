@@ -1,0 +1,12 @@
+{
+  "release": "Master Specification Alignment \u2014 Increment 1",
+  "baseline": "EarthTrace_Global_Investigation_Complete_Upgrade.zip",
+  "original_dataset_csv_sha256": "720848e8921a403b9c90039614da2abdee52a4eda9484333b3db4fa07b8dffa6",
+  "original_dataset_metadata_sha256": "952c29f00e9e2ce0ae0f7a8409282e41c325d8c1491a4da03bc5f735f0243fdf",
+  "preserved_original_nasa_data": true,
+  "backend_tests_passed": 69,
+  "frontend_logic_tests_passed": 40,
+  "frontend_production_build_verified": false,
+  "scope": "Verified NASA product catalogue + source-coverage preview, requirements audit, original functionality preserved; NOT a full V1/V2 implementation",
+  "future_enhancements_section_31": "Deferred"
+}
