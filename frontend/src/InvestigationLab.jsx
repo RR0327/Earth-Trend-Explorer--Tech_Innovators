@@ -1,4 +1,4 @@
-import React,{useMemo,useState} from 'react';
+import React,{useEffect,useMemo,useState} from 'react';
 import {BookOpen,CheckCircle2,ChevronDown,Database,ExternalLink,FileUp,Globe2,Info,Lightbulb,MapPin,Microscope,Play,RotateCcw,Satellite,ShieldAlert,Target} from 'lucide-react';
 import {parseMonthlyCsv,investigatorVariables,validateExploration} from './investigation.mjs';
 
@@ -9,11 +9,12 @@ function detectSpatialNotes(text) {
  const requested=text.match(/^User Bounding Box:\s*,\s*"?([^"\r\n]+)/im);
  return {sampled:data?.[1]?.trim()||'',requested:requested?.[1]?.trim()||''};
 }
-export default function InvestigationLab({apiBase,onExplored,onRestore,hasCurated}) {
+export default function InvestigationLab({apiBase,onExplored,onRestore,hasCurated,studyArea}) {
  const [variable,setVariable]=useState('temperature');
  const config=investigatorVariables.find(v=>v.id===variable);
  const [unit,setUnit]=useState('K');
  const [region,setRegion]=useState('');
+ useEffect(()=>{if(studyArea?.name)setRegion(`${studyArea.name} — ${studyArea.kind}; selected box ${studyArea.bbox.join(', ')}, verify actual data grid`);},[studyArea]);
  const [sourceUrl,setSourceUrl]=useState(GIOVANNI);
  const [file,setFile]=useState(null);
  const [observations,setObservations]=useState([]);
@@ -40,7 +41,7 @@ export default function InvestigationLab({apiBase,onExplored,onRestore,hasCurate
  async function run(event){
   event.preventDefault();setProblem('');setSuccess(false);
   const first=Number(startYear),last=Number(endYear);
-  const payload={variable,product:config.product,unit,region,source_url:sourceUrl,observations,start_year:first,end_year:last};
+  const payload={variable,product:config.product,unit,region,source_url:sourceUrl,observations,start_year:first,end_year:last,requested_bbox:studyArea?.bbox||null};
   try{validateExploration(payload);if(first>last)throw new Error('Start year must not exceed end year.');}
   catch(e){setProblem(e.message);return;}
   if(!apiBase){setProblem('Set VITE_API_URL for this deployed application.');return;}
