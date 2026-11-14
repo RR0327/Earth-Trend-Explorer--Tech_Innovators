@@ -1,0 +1,9 @@
+{
+  "release": "EarthTrace global-capable upgrade",
+  "baseline_zip_sha256": "6b280e9fdbe05113327d012ded5c6642a0be8e55444a4460be30225514b32853",
+  "curated_nasa_csv_sha256": "720848e8921a403b9c90039614da2abdee52a4eda9484333b3db4fa07b8dffa6",
+  "submitted_snapshot_sha256": "0fef368a7627a0cc7fef5b2ad87f9e1afbc84f0a75c8f4990af4f711d122fdb2",
+  "scientific_context": "selected-area MERRA-2 T2M; 301 monthly observations; 25 complete annual years; Kendall p\u22480.255372",
+  "frontend_build": "not verified in this environment (npm dependencies unavailable)",
+  "public_nasa_power": "live monthly point endpoint; external NASA data not retrievable in this environment"
+}
