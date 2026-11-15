@@ -376,6 +376,14 @@ Further technical and scientific details are available in `docs/`, in the source
 
 EarthTrend Detective uses data and reference materials from **NASA Earth science programs**, NASA Giovanni, NASA POWER, and **Natural Earth** geographic boundaries. The project was developed independently for the NASA Space Apps Challenge. Data remain subject to their respective source acknowledgments, terms, quality notes, and citations.
 
+
+## Super Intelligence (SI) Use Disclosure
+
+Team Tech_Innovators used ChatGPT and AI-assisted tools for project ideation, technical research, software development, debugging, automated testing, interface design, documentation, and presentation preparation.
+
+The environmental observations used in EarthTrend Detective originate from NASA MERRA-2, GPM IMERG, and GLDAS datasets. The team used Python-based scientific processing methods for statistical analysis rather than generating artificial environmental measurements.
+
+AI-assisted code and content were incorporated into the project's development workflow. The demonstration presentation is visibly identified as SI-assisted. The team retains responsibility for the accuracy, review, attribution, and originality of the submitted work.
 ---
 
 **EarthTrend Detective** — _From satellite-informed observations to transparent environmental insight._
