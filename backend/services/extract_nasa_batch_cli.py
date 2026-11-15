@@ -8,7 +8,9 @@ from services.nasa_batch import BatchValidationError,extract_batch,write_batch_r
 
 def main():
     p=argparse.ArgumentParser(description='Validate and extract locally downloaded NASA gridded NetCDF files')
-    p.add_argument('--files',nargs='+',required=True,help='Locally downloaded .nc/.nc4 files, not fabricated fixtures')
+    src=p.add_mutually_exclusive_group(required=True)
+    src.add_argument('--files',nargs='+',help='Locally downloaded .nc/.nc4 files')
+    src.add_argument('--directory',help='Directory containing actual NetCDF files (Windows-safe)')
     p.add_argument('--product',required=True,choices=['gpm_3imergm_07_final','gldas_noah025_m_2_1_soil0_10','merra2_m2tmnxslv_t2m'])
     area=p.add_mutually_exclusive_group(required=True)
     area.add_argument('--country',help='Bundled Natural Earth ISO3 country geometry')
@@ -25,7 +27,13 @@ def main():
             geo=json.loads(Path(args.geometry).read_text(encoding='utf-8'))
             if geo.get('type')=='Feature':geo=geo['geometry']
         urls=json.loads(Path(args.source_urls_file).read_text(encoding='utf-8')) if args.source_urls_file else None
-        result=extract_batch(args.files,args.product,geo,args.region,urls)
+        files = args.files if args.files else sorted(
+            (file for file in Path(args.directory).iterdir() if file.is_file() and file.suffix.lower() in ('.nc', '.nc4')),
+            key=lambda file: file.name
+        )
+        if not files:
+            raise BatchValidationError('No .nc or .nc4 files found in selected directory')
+        result=extract_batch(files,args.product,geo,args.region,urls)
         a,b=write_batch_result(result,args.output_prefix)
         print('BATCH EXTRACTION SUCCESS: '+str(len(result['observations']))+' monthly observations')
         print('MISSING MONTHS: '+str(result['metadata']['missing_month_count']))
