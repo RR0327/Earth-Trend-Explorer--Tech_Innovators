@@ -24,3 +24,21 @@ export function mapPointFromClient(clientX,clientY,rect,view){
 }
 export function zoomMap(view,multiplier){const width=Math.min(400,Math.max(20,view.width/multiplier));const height=width*220/400;return {x:Math.max(0,Math.min(400-width,view.x+(view.width-width)/2)),y:Math.max(0,Math.min(220-height,view.y+(view.height-height)/2)),width,height};}
 export function panMap(view,dx,dy){return {...view,x:Math.max(0,Math.min(400-view.width,view.x+dx)),y:Math.max(0,Math.min(220-view.height,view.y+dy))};}
+
+// Preview size without accepting or silently clipping an invalid research polygon.
+export function polygonExtent(vertices){
+ if(!Array.isArray(vertices)||vertices.length<2)return null;
+ const xs=vertices.map(p=>p[0]),ys=vertices.map(p=>p[1]);
+ return {width:Math.max(...xs)-Math.min(...xs),height:Math.max(...ys)-Math.min(...ys)};
+}
+// NASA POWER is point-based, so it can use a point even if a draft region is too large
+// for operator-approved area extraction. Never represent this as a polygon mean.
+export function pointCenterFromSelection(bounds,draft=[]){
+ let b=bounds;
+ if(Array.isArray(draft)&&draft.length>=2){
+  const xs=draft.map(p=>p[0]),ys=draft.map(p=>p[1]);
+  b=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];
+ }
+ if(!Array.isArray(b)||b.length!==4||b.some(n=>!Number.isFinite(n)))throw Error('Valid point bounds required');
+ return {lon:(b[0]+b[2])/2,lat:(b[1]+b[3])/2};
+}

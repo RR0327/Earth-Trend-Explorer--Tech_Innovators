@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {fileURLToPath} from 'node:url';
+const dir=new URL('../public/data/natural_earth_countries_110m.geojson', import.meta.url);
+const component=readFileSync(fileURLToPath(new URL('./GlobalExplorer.jsx',import.meta.url)),'utf8');
+const css=readFileSync(fileURLToPath(new URL('./style.css',import.meta.url)),'utf8');
+test('world GeoJSON bundled with real polygons',()=>{const data=JSON.parse(readFileSync(fileURLToPath(dir),'utf8'));assert.equal(data.type,'FeatureCollection');assert.ok(data.features.length>=150)});
+test('world map tries backend then bundled geometry',()=>{assert.match(component,/api\/geography\/world/);assert.match(component,/BUNDLED_WORLD_URL/);assert.match(component,/loadWorld\(\)/)});
+test('map has day mode colors and footer has theme tokens',()=>{assert.match(css,/\[data-theme="light"\] \.earthtrend-footer/);assert.match(css,/--gis-ocean:#e8f5fc/)});
