@@ -21,6 +21,28 @@ class PublicationError(ValueError):
     pass
 
 
+def publication_status():
+    """Non-sensitive readiness information. Does not expose filesystem paths."""
+    if os.getenv('EARTH_TREND_RESEARCH_PUBLIC', '').strip() != '1':
+        return {'enabled': False, 'state': 'disabled', 'record_count': None,
+                'next_action': 'An administrator must approve and enable a reviewed research database.'}
+    raw = os.getenv('EARTH_TREND_RESEARCH_DB', '').strip()
+    if not raw:
+        return {'enabled': True, 'state': 'not_configured', 'record_count': None,
+                'next_action': 'Set EARTH_TREND_RESEARCH_DB to an existing reviewed SQLite file.'}
+    from services.nasa_source_setup import inspect_research_db
+    status = inspect_research_db(raw)
+    state = status['status']
+    instructions = {'missing':'The configured database file does not exist; build a real research record first.',
+                    'uninitialized':'The SQLite file has no research_runs table; use the trusted research CLI.',
+                    'empty':'No published research runs yet; build and review one first.',
+                    'unreadable':'The database cannot be read; inspect permissions and integrity.',
+                    'ready':'Read-only research publication is available.'}
+    return {'enabled': True, 'state': state,
+            'record_count': status['records'] if state in ('empty','ready') else None,
+            'next_action': instructions.get(state,'Check database configuration.')}
+
+
 def publication_database():
     if os.getenv('EARTH_TREND_RESEARCH_PUBLIC', '').strip() != '1':
         raise PublicationError('Research publication is disabled. Set EARTH_TREND_RESEARCH_PUBLIC=1 after curating records.')
