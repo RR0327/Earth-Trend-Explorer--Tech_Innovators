@@ -10,11 +10,10 @@ Built as an independent **NASA Space Apps Challenge** project, EarthTrend Detect
 
 ## Live application
 
-| Service | URL |
-| --- | --- |
-| **Website (Vercel)** | **https://earth-trend-explorer-tech-innovator.vercel.app/** |
-| Backend API (Render) | https://earth-trend-explorer-tech-innovators.onrender.com/ |
-| API documentation | https://earth-trend-explorer-tech-innovators.onrender.com/docs |
+| Service              | URL                                                            |
+| -------------------- | -------------------------------------------------------------- |
+| **Website (Vercel)** | **https://earth-trend-explorer-tech-innovator.vercel.app/**    |
+| API documentation    | https://earth-trend-explorer-tech-innovators.onrender.com/docs |
 
 The website URL is the published project address. Availability of the Render service, saved research history, and live extraction depends on the active deployment and its configured data storage. Some research capabilities described below are available in a properly configured local installation but are not automatically enabled on the hosted application.
 
@@ -64,13 +63,13 @@ The application does **not** fill missing observations with invented values or p
 
 ## Scientific data sources
 
-| NASA product | Environmental variable | How the application uses it |
-| --- | --- | --- |
-| **MERRA-2** | Near-surface air temperature (`T2M`) | Included curated selected-area Giovanni demonstration; can also be processed from supported local gridded sources |
-| **GPM IMERG V07** | Precipitation (`precipitation`) | Validated monthly NetCDF-based research and regional precipitation trends |
-| **GLDAS Noah V2.1** | 0–10 cm soil moisture (`SoilMoi0_10cm_inst`) | Validated monthly NetCDF-based research and regional soil-moisture trends |
-| **NASA POWER** | Point-based near-surface temperature | Optional live HTTPS query; not a polygon-based national average |
-| **Natural Earth** | Country boundary geometry | Country identification and geographic selection; not an observation dataset |
+| NASA product        | Environmental variable                       | How the application uses it                                                                                       |
+| ------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **MERRA-2**         | Near-surface air temperature (`T2M`)         | Included curated selected-area Giovanni demonstration; can also be processed from supported local gridded sources |
+| **GPM IMERG V07**   | Precipitation (`precipitation`)              | Validated monthly NetCDF-based research and regional precipitation trends                                         |
+| **GLDAS Noah V2.1** | 0–10 cm soil moisture (`SoilMoi0_10cm_inst`) | Validated monthly NetCDF-based research and regional soil-moisture trends                                         |
+| **NASA POWER**      | Point-based near-surface temperature         | Optional live HTTPS query; not a polygon-based national average                                                   |
+| **Natural Earth**   | Country boundary geometry                    | Country identification and geographic selection; not an observation dataset                                       |
 
 The repository contains a curated MERRA-2 sample. The full downloaded IMERG and GLDAS NetCDF collections, research database, and personal acquisition files are deliberately **not committed to GitHub**. A fresh clone can run the dashboard and included sample without them. To reproduce extended research results locally, obtain and validate the appropriate source datasets using your own NASA Earthdata access.
 
@@ -78,15 +77,15 @@ The repository contains a curated MERRA-2 sample. The full downloaded IMERG and 
 
 ## Technology stack
 
-| Layer | Technologies |
-| --- | --- |
-| Frontend | React 18, Vite, JavaScript, CSS, Recharts, Lucide icons |
-| Backend | Python, FastAPI, Uvicorn |
-| Scientific processing | NumPy, SciPy, xarray, netCDF4, Shapely |
-| Research persistence | SQLite with integrity checking and backup tooling |
-| Report generation | ReportLab |
-| Quality assurance | pytest, Node.js built-in test runner, production frontend build |
-| Hosting | Vercel (frontend), Render (backend) |
+| Layer                 | Technologies                                                    |
+| --------------------- | --------------------------------------------------------------- |
+| Frontend              | React 18, Vite, JavaScript, CSS, Recharts, Lucide icons         |
+| Backend               | Python, FastAPI, Uvicorn                                        |
+| Scientific processing | NumPy, SciPy, xarray, netCDF4, Shapely                          |
+| Research persistence  | SQLite with integrity checking and backup tooling               |
+| Report generation     | ReportLab                                                       |
+| Quality assurance     | pytest, Node.js built-in test runner, production frontend build |
+| Hosting               | Vercel (frontend), Render (backend)                             |
 
 ## System architecture
 
@@ -293,27 +292,27 @@ The provided smoke test is tailored to installations with **both** reviewed IMER
 
 The interactive OpenAPI documentation is available at **`/docs`**. Key endpoints include:
 
-| Method | Endpoint | Purpose |
-| --- | --- | --- |
-| GET | `/api/health` | API health |
-| GET | `/api/ready` | Curated dataset readiness |
-| GET | `/api/datasets` | Available curated datasets |
-| GET | `/api/datasets/{dataset_id}` | Curated monthly observations and metadata |
-| GET | `/api/datasets/{dataset_id}/trend` | Trend analysis of a curated dataset |
-| GET | `/api/catalog/products` | Supported NASA product information |
-| GET | `/api/geography/countries` | Country list and boundary references |
-| GET | `/api/geography/countries/{country_code}` | Boundary geometry for an ISO3 country |
-| GET | `/api/nasa-power/point` | Available NASA POWER point temperature series |
-| POST | `/api/explore` | Ephemeral visitor-supplied series analysis |
-| POST | `/api/compare` | Compare compatible observation series |
-| GET | `/api/extraction/catalog` | Public availability of operator-approved grids |
-| POST | `/api/extraction/analyze` | Bounded extraction against approved grids, if enabled |
-| GET | `/api/research/status` | Published research library availability |
-| GET | `/api/research/history` | Approved saved research records |
-| GET | `/api/research/available-regions` | Regions supported by published studies |
-| GET | `/api/research/{research_id}` | Detailed approved study record |
-| GET | `/api/research/{research_id}/explanation` | Grounded interpretation of stored results |
-| GET | `/api/research/{research_id}/report.pdf` | PDF research report |
+| Method | Endpoint                                  | Purpose                                               |
+| ------ | ----------------------------------------- | ----------------------------------------------------- |
+| GET    | `/api/health`                             | API health                                            |
+| GET    | `/api/ready`                              | Curated dataset readiness                             |
+| GET    | `/api/datasets`                           | Available curated datasets                            |
+| GET    | `/api/datasets/{dataset_id}`              | Curated monthly observations and metadata             |
+| GET    | `/api/datasets/{dataset_id}/trend`        | Trend analysis of a curated dataset                   |
+| GET    | `/api/catalog/products`                   | Supported NASA product information                    |
+| GET    | `/api/geography/countries`                | Country list and boundary references                  |
+| GET    | `/api/geography/countries/{country_code}` | Boundary geometry for an ISO3 country                 |
+| GET    | `/api/nasa-power/point`                   | Available NASA POWER point temperature series         |
+| POST   | `/api/explore`                            | Ephemeral visitor-supplied series analysis            |
+| POST   | `/api/compare`                            | Compare compatible observation series                 |
+| GET    | `/api/extraction/catalog`                 | Public availability of operator-approved grids        |
+| POST   | `/api/extraction/analyze`                 | Bounded extraction against approved grids, if enabled |
+| GET    | `/api/research/status`                    | Published research library availability               |
+| GET    | `/api/research/history`                   | Approved saved research records                       |
+| GET    | `/api/research/available-regions`         | Regions supported by published studies                |
+| GET    | `/api/research/{research_id}`             | Detailed approved study record                        |
+| GET    | `/api/research/{research_id}/explanation` | Grounded interpretation of stored results             |
+| GET    | `/api/research/{research_id}/report.pdf`  | PDF research report                                   |
 
 Public research-library and approved-grid endpoints are **optional**, and their availability reflects configured, reviewed server-side data. No public endpoint accepts arbitrary filesystem paths or writes directly into the research database.
 
@@ -325,13 +324,13 @@ The application uses separate hosting services for the frontend and backend.
 
 Configure the Render service for the `backend` directory:
 
-| Setting | Value |
-| --- | --- |
-| Root directory | `backend` |
-| Build command | `pip install -r requirements.txt` |
-| Start command | `uvicorn main:app --host 0.0.0.0 --port $PORT` |
-| Health check | `/api/ready` |
-| `APP_ENV` | `production` |
+| Setting        | Value                                                    |
+| -------------- | -------------------------------------------------------- |
+| Root directory | `backend`                                                |
+| Build command  | `pip install -r requirements.txt`                        |
+| Start command  | `uvicorn main:app --host 0.0.0.0 --port $PORT`           |
+| Health check   | `/api/ready`                                             |
+| `APP_ENV`      | `production`                                             |
 | `CORS_ORIGINS` | `https://earth-trend-explorer-tech-innovator.vercel.app` |
 
 For published research history, additionally provision and back up a **durable server-side database volume**. Securely transfer the reviewed SQLite database to that volume and configure:
@@ -347,13 +346,13 @@ Browser-based grid extraction also needs a separate, approved, server-side NetCD
 
 ### Frontend — Vercel
 
-| Setting | Value |
-| --- | --- |
-| Root directory | `frontend` |
-| Framework | Vite |
-| Build command | `npm run build` |
-| Output directory | `dist` |
-| `VITE_API_URL` | `https://earth-trend-explorer-tech-innovators.onrender.com` |
+| Setting          | Value                                                       |
+| ---------------- | ----------------------------------------------------------- |
+| Root directory   | `frontend`                                                  |
+| Framework        | Vite                                                        |
+| Build command    | `npm run build`                                             |
+| Output directory | `dist`                                                      |
+| `VITE_API_URL`   | `https://earth-trend-explorer-tech-innovators.onrender.com` |
 
 Set `VITE_API_URL` in the Vercel project environment before running the production build. The frontend intentionally does **not** fall back to a visitor's localhost API in production. Do not put secrets in variables beginning with `VITE_`.
 
@@ -379,4 +378,4 @@ EarthTrend Detective uses data and reference materials from **NASA Earth science
 
 ---
 
-**EarthTrend Detective** — *From satellite-informed observations to transparent environmental insight.*
+**EarthTrend Detective** — _From satellite-informed observations to transparent environmental insight._
