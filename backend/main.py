@@ -221,6 +221,12 @@ def country_boundary_geometry(country_code: str):
     except KeyError: raise HTTPException(status_code=404,detail='Country boundary not present in packaged reference data')
 
 
+@app.get('/api/research/status')
+def research_publication_status():
+    from services.research_publication import publication_status
+    return publication_status()
+
+
 # Public research publication is opt-in and READ-ONLY. Source NetCDF ingestion
 # and write access remain restricted to the trusted local administrator CLI.
 @app.get('/api/research/history')
@@ -230,6 +236,31 @@ def published_history(limit: int = 20, offset: int = 0):
         return list_published(publication_database(), limit=limit, offset=offset)
     except PublicationError as exc:
         raise HTTPException(status_code=422 if str(exc)=='Invalid pagination' else 503, detail=str(exc))
+
+
+@app.get('/api/research/available-regions')
+def published_research_regions(limit: int = 50):
+    """Only real, published study regions: no synthetic world coverage."""
+    from services.research_publication import publication_database, list_published, get_published, PublicationError
+    from services.research_insights import published_regions
+    try:
+        listed = list_published(publication_database(), limit=min(max(limit,1),50))
+        actual = [get_published(publication_database(), row['research_id']) for row in listed['records']]
+        return {'regions':published_regions(actual), 'record_count':listed['total'],
+                'note':'Only approved, stored observations are available. New arbitrary polygon extraction requires separate trusted processing.'}
+    except PublicationError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.get('/api/research/{research_id}/explanation')
+def published_research_explanation(research_id: str):
+    """Read-only deterministic language grounded in verified research statistics."""
+    from services.research_publication import publication_database, get_published, PublicationError
+    from services.research_insights import explain_research
+    try:
+        return explain_research(get_published(publication_database(),research_id))
+    except PublicationError as exc:
+        raise HTTPException(status_code=404 if str(exc).startswith(('Invalid research','Research record')) else 503,detail=str(exc))
 
 
 @app.get('/api/research/{research_id}')
@@ -252,3 +283,27 @@ def published_research_pdf(research_id: str):
     return Response(content=report,media_type='application/pdf',headers={
         'Content-Disposition': f'attachment; filename="earthtrend-{research_id[:16]}.pdf"',
         'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff'})
+
+
+# Opt-in approved-grid extraction. Does not accept NetCDF uploads or filesystem paths.
+@app.get('/api/extraction/catalog')
+def approved_grid_catalog():
+    from services.approved_extraction import catalog, ApprovedExtractionError
+    try: return catalog()
+    except ApprovedExtractionError as exc: raise HTTPException(status_code=503, detail=str(exc))
+
+@app.post('/api/extraction/analyze')
+async def approved_grid_analyze(request: Request):
+    from services.approved_extraction import extract, ApprovedExtractionError
+    if request.headers.get('content-type','').split(';')[0].lower()!='application/json':
+        raise HTTPException(status_code=415, detail='Content-Type must be application/json')
+    body=await request.body()
+    if len(body)>2048: raise HTTPException(status_code=413,detail='Request exceeds 2 KB')
+    import json
+    try: data=json.loads(body)
+    except (ValueError,UnicodeDecodeError): raise HTTPException(status_code=400,detail='Invalid JSON')
+    from starlette.concurrency import run_in_threadpool
+    try: return await run_in_threadpool(extract, data)
+    except ApprovedExtractionError as exc:
+        status=503 if str(exc) in ('Public grid extraction disabled','Research extraction is busy; retry after the current request') else 422
+        raise HTTPException(status_code=status,detail=str(exc))
