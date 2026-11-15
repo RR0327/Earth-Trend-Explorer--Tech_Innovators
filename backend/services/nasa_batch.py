@@ -11,7 +11,7 @@ from pathlib import Path
 
 import xarray as xr
 
-from services.grid_extraction import PRODUCTS, GridExtractionError, extract_gridded_series
+from services.grid_extraction import PRODUCTS, GridExtractionError, extract_gridded_series, open_product_dataset
 
 
 class BatchValidationError(ValueError):
@@ -37,7 +37,7 @@ def validate_source_file(path, product_id):
         raise BatchValidationError('NetCDF exceeds 1 GB safe local extraction limit')
     spec=PRODUCTS[product_id]
     try:
-        with xr.open_dataset(p,decode_times=True) as ds:
+        with open_product_dataset(p, product_id, decode_times=True) as ds:
             var=ds.get(spec['variable'])
             if var is None:
                 raise BatchValidationError('Missing expected variable '+spec['variable'])
