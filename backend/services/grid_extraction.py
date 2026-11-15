@@ -77,6 +77,26 @@ def spatial_weights(lat,lon,geometry):
 def _normalize_unit(unit):
     return str(unit).lower().replace(' ','').replace('**','^').replace('−','-').replace('²','2')
 
+def open_product_dataset(path, product_id, decode_times=True):
+    """Open supported root-level products and Harmony's IMERG /Grid layout.
+
+    Backward compatibility: legacy approved root-level IMERG fixtures are valid;
+    real Harmony subset exports expose precipitation under /Grid.
+    """
+    if product_id not in PRODUCTS:
+        raise GridExtractionError('Unsupported NASA product identifier')
+    try:
+        root = xr.open_dataset(path, decode_times=decode_times)
+    except Exception as exc:
+        raise GridExtractionError('Cannot decode NetCDF root (install netCDF4 for HDF5): '+str(exc)) from exc
+    if product_id != 'gpm_3imergm_07_final' or PRODUCTS[product_id]['variable'] in root:
+        return root
+    root.close()
+    try:
+        return xr.open_dataset(path, group='Grid', decode_times=decode_times)
+    except Exception as exc:
+        raise GridExtractionError('Cannot decode IMERG /Grid group (install netCDF4): '+str(exc)) from exc
+
 def extract_gridded_series(path,product_id,geometry,region_name,expected_source_file_sha256=None):
     if product_id not in PRODUCTS:raise GridExtractionError('Unsupported NASA product identifier')
     if not isinstance(region_name,str) or not 1<=len(region_name.strip())<=150:
@@ -90,7 +110,7 @@ def extract_gridded_series(path,product_id,geometry,region_name,expected_source_
         raise GridExtractionError('Source checksum mismatch')
     specification=PRODUCTS[product_id]
     try:
-        ds=xr.open_dataset(file,decode_times=True)
+        ds=open_product_dataset(file, product_id, decode_times=True)
     except Exception as exc:
         raise GridExtractionError('Cannot decode NetCDF input (install netCDF4 for NetCDF4/HDF5)') from exc
     try:
