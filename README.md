@@ -63,3 +63,9 @@ Live website: https://earth-trend-explorer-tech-innovator.vercel.app/
 ### Traceability
 
 `docs/GLOBAL_RELEASE_SCOPE_AND_LIMITATIONS.md`, `docs/TECHNICAL_ARCHITECTURE.md`, and the ignored local verification/replacement instructions. The previous contest submission ZIP must remain unchanged and archived separately.
+
+## Increment 6: Research publication and reporting
+
+EarthTrend Detective supports a researcher-operated, content-addressed SQLite archive built from previously validated local NASA gridded datasets. **Publication is off by default.** Administrators can publish a reviewed research database on a persistent backend volume by setting `EARTH_TREND_RESEARCH_PUBLIC=1` and `EARTH_TREND_RESEARCH_DB=/absolute/path/to/reviewed.sqlite3`.
+
+The public read-only API adds `/api/research/history`, `/api/research/{id}`, and `/api/research/{id}/report.pdf`; the website adds a Research Library and a shared-year regional comparison chart. No login, public writing, or upload-to-database endpoint has been added. See `docs/requirements/INCREMENT_6_RESEARCH_PUBLICATION_AND_REPORTING.md` for deployment, scientific, security, and source-review limitations. Section 31 future enhancements remain deferred.
