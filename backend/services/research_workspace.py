@@ -17,7 +17,7 @@ import numpy as np
 import xarray as xr
 from shapely.geometry import box, shape
 
-from services.grid_extraction import PRODUCTS, _bounds, _geometry
+from services.grid_extraction import PRODUCTS, _bounds, _geometry, open_product_dataset
 from services.nasa_batch import BatchValidationError, extract_batch
 from services.trend_analyzer import TrendValidationError, analyze_dataset
 
@@ -37,7 +37,7 @@ def _sha(value):
     return hashlib.sha256(_canonical(value).encode('utf-8')).hexdigest()
 
 
-def _spatial_source_coverage(path, geometry):
+def _spatial_source_coverage(path, geometry, product_id):
     """Ensure the WHOLE study polygon lies inside supplied grid-cell extent.
 
     Coordinates are rectilinear WGS84. This does not establish whether the
@@ -45,7 +45,7 @@ def _spatial_source_coverage(path, geometry):
     """
     study = _geometry(geometry)
     try:
-        with xr.open_dataset(path, decode_times=False) as ds:
+        with open_product_dataset(path, product_id, decode_times=False) as ds:
             lat_edges = _bounds(ds.lat.values)
             lon_edges = _bounds(ds.lon.values)
             envelope = box(float(lon_edges.min()), float(lat_edges.min()),
@@ -144,7 +144,7 @@ def build_workspace(files, product_id, regions, source_urls=None, minimum_valid_
     # being passed off as whole-country averages.
     extent_checks = {}
     for region in checked:
-        extent_checks[region['id']] = [_spatial_source_coverage(p, region['geometry']) for p in files]
+        extent_checks[region['id']] = [_spatial_source_coverage(p, region['geometry'], product_id) for p in files]
     studies = []
     for region in checked:
         try:
