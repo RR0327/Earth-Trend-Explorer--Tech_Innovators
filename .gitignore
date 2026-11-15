@@ -20,10 +20,10 @@ backend/data/*.json
 .coverage
 htmlcov/
 
-# Phase 3: explicitly approved and curated NASA Giovanni monthly dataset
+# Curated source: explicitly approved and curated NASA Giovanni monthly dataset
 !backend/data/merra2_selected_area_temperature_2000_2025.csv
 !backend/data/merra2_selected_area_temperature_2000_2025.json
-# Increment 5 local, persistent research workspaces (not for public Git)
+# Local persistent research workspaces (not for public Git)
 *.sqlite3
 *.sqlite3-journal
 *.sqlite3-wal
