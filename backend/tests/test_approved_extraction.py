@@ -68,3 +68,19 @@ def test_reject_large_payload_and_wrong_media_type(tmp_path,monkeypatch):
     configured(tmp_path,monkeypatch)
     assert client.post('/api/extraction/analyze',data='x'*2100,headers={'content-type':'application/json'}).status_code==413
     assert client.post('/api/extraction/analyze',data='x',headers={'content-type':'text/plain'}).status_code==415
+
+
+def test_polygon_extraction_and_reject_unsafe_geometry(tmp_path,monkeypatch):
+    configured(tmp_path,monkeypatch)
+    good=[[19.7,9.7],[20.3,9.7],[20.3,11.3],[19.7,11.3],[19.7,9.7]]
+    r=client.post('/api/extraction/analyze',json={'product_id':PRODUCT,'polygon':good})
+    assert r.status_code==200,r.text
+    assert r.json()['region_id']=='CUSTOM_POLYGON'
+    assert r.json()['observation_count']==96
+    for bad in (good[:-1], [[19.7,9.7],[20.3,11.3],[19.7,11.3],[20.3,9.7],[19.7,9.7]],
+                [[19,10],[50,10],[50,11],[19,10]],
+                [[19,10],[20,10],[20,11],[19,10],[19,10]],
+                [[19,10],[20,10],[20,'11'],[19,10]]):
+        q=client.post('/api/extraction/analyze',json={'product_id':PRODUCT,'polygon':bad})
+        assert q.status_code==422,q.text
+    assert client.post('/api/extraction/analyze',json={'product_id':PRODUCT,'polygon':good,'bbox':[19,9,20,11]}).status_code==422

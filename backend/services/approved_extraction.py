@@ -10,7 +10,7 @@ import os
 import re
 import threading
 from pathlib import Path
-from shapely.geometry import box
+from shapely.geometry import box, Polygon
 from services.country_boundaries import get_boundary
 from services.grid_extraction import PRODUCTS
 from services.research_workspace import build_workspace, ResearchValidationError
@@ -75,7 +75,7 @@ def catalog():
 
 def extract(request):
     if not isinstance(request,dict): raise ApprovedExtractionError('JSON object required')
-    if set(request)-{'product_id','country_code','bbox'}:
+    if set(request)-{'product_id','country_code','bbox','polygon'}:
         raise ApprovedExtractionError('Unexpected request fields')
     product=request.get('product_id')
     if not isinstance(product,str) or not _PRODUCT.fullmatch(product):
@@ -83,8 +83,8 @@ def extract(request):
     approved=_manifest()
     if approved is None: raise ApprovedExtractionError('Public grid extraction disabled')
     if product not in approved: raise ApprovedExtractionError('Product not included in approved public grid catalogue')
-    if ('country_code' in request)==('bbox' in request):
-        raise ApprovedExtractionError('Choose exactly one country_code or bbox')
+    if sum(key in request for key in ('country_code','bbox','polygon'))!=1:
+        raise ApprovedExtractionError('Choose exactly one country_code, bbox or polygon')
     if 'country_code' in request:
         code=request['country_code']
         if not isinstance(code,str) or not re.fullmatch('[A-Z]{3}',code):
@@ -92,6 +92,25 @@ def extract(request):
         try: feature=get_boundary(code)
         except KeyError as exc: raise ApprovedExtractionError('Unknown country boundary') from exc
         geometry=feature['geometry'];name=str(feature['properties']['name']);region_id=code
+    elif 'polygon' in request:
+        coords=request['polygon']
+        if (not isinstance(coords,list) or not 4<=len(coords)<=26 or
+            any(not isinstance(pt,list) or len(pt)!=2 or any(type(value) not in (int,float) for value in pt) for pt in coords)):
+            raise ApprovedExtractionError('Polygon must have 3–25 WGS84 vertices and a closing point')
+        import math
+        if not all(math.isfinite(value) and -180<=pt[0]<=180 and -90<=pt[1]<=90 for pt in coords for value in pt):
+            raise ApprovedExtractionError('Polygon has invalid WGS84 coordinates')
+        if coords[0]!=coords[-1] or len({tuple(pt) for pt in coords[:-1]})<3:
+            raise ApprovedExtractionError('Polygon must be closed with at least three distinct vertices')
+        west=min(pt[0] for pt in coords);east=max(pt[0] for pt in coords)
+        south=min(pt[1] for pt in coords);north=max(pt[1] for pt in coords)
+        if east-west>25 or north-south>25 or west==east or south==north:
+            raise ApprovedExtractionError('Polygon must be bounded to 25 degrees per axis')
+        area=Polygon(coords)
+        if area.is_empty or not area.is_valid or area.area<=1e-9:
+            raise ApprovedExtractionError('Polygon must be simple, non-self-intersecting and nonzero area')
+        geometry=area.__geo_interface__
+        region_id='CUSTOM_POLYGON';name='User-drawn bounded polygon'
     else:
         coords=request['bbox']
         if not isinstance(coords,list) or len(coords)!=4 or any(type(v) not in (int,float) for v in coords):

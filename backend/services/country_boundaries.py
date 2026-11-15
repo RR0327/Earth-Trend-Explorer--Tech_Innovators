@@ -26,3 +26,12 @@ def get_boundary(code):
     f=_features().get(str(code).upper())
     if f is None: raise KeyError('Country boundary not included in installed Natural Earth snapshot')
     return f
+
+
+@lru_cache(maxsize=1)
+def world_boundaries():
+    """Read-only, bundled Natural Earth geometry without any NASA-coverage assertion."""
+    data = json.loads(FILE.read_text(encoding='utf-8'))
+    if data.get('type') != 'FeatureCollection' or not isinstance(data.get('features'), list):
+        raise ValueError('Bundled world geography is invalid')
+    return data

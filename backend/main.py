@@ -208,6 +208,13 @@ def geospatial_capabilities():
     }
 
 
+@app.get('/api/geography/world')
+def world_boundary_geometry():
+    """Return the bundled Natural Earth 110m country boundaries (reference geography, not NASA observation coverage)."""
+    from services.country_boundaries import world_boundaries
+    return world_boundaries()
+
+
 @app.get('/api/geography/countries')
 def country_boundary_catalog(q: str = '', limit: int = 200):
     from services.country_boundaries import list_boundaries
