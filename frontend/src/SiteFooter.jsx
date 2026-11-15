@@ -1,22 +1,59 @@
 import React from 'react';
-import {Globe2,ExternalLink,ArrowUpRight,Database,ShieldCheck,BookOpen,Mail} from 'lucide-react';
-import {FOOTER_SECTIONS, FOOTER_EXTERNAL} from './footer-content.mjs';
+import { Earth, Leaf, Satellite } from 'lucide-react';
+import { FOOTER_SECTIONS } from './footer-content.mjs';
 
-export default function SiteFooter(){
- const year=new Date().getFullYear();
- return <footer className="etd-site-footer" aria-label="EarthTrend Detective website footer">
-  <div className="etd-footer-top">
-   <div className="etd-footer-mission">
-    <a className="etd-footer-brand" href="#overview" aria-label="EarthTrend Detective — back to overview"><span className="etd-footer-symbol"><Globe2 size={22}/></span><span><strong>EARTH<span>TRACE</span></strong><small>EARTH SYSTEM TREND DETECTIVE</small></span></a>
-    <p>Explore environmental evidence with NASA Earth science observations, transparent statistical methods and reproducible research workflows.</p>
-    <p className="etd-footer-clarifier"><ShieldCheck size={16}/> Independent educational and research project; not an official NASA website or NASA endorsement.</p>
-    <p className="etd-footer-clarifier"><Database size={16}/> No account required. Public read-only exploration. Imported data must match the stated study region and source product.</p>
-   </div>
-   <div className="etd-footer-directory">
-   {FOOTER_SECTIONS.map(section=><section className="etd-footer-column" key={section.title}><h2>{section.title}</h2><ul>{section.links.map(link=><li key={link.label}>{link.external?<a href={link.href} target="_blank" rel="noopener noreferrer">{link.label} <ExternalLink aria-hidden="true" size={12}/></a>:<a href={link.href}>{link.label}</a>}</li>)}</ul></section>)}
-   </div>
-  </div>
-  <div className="etd-footer-facts" aria-label="Scientific context"><span><BookOpen size={15}/> MERRA-2 / GPM IMERG / GLDAS documented NASA families</span><span><ShieldCheck size={15}/> Source-dependent geography, coverage and units</span><span>p-value is not proof of causation</span></div>
-  <div className="etd-footer-bottom"><span>© {year} EarthTrend Detective · EarthTrace research interface</span><span>Bangladesh is the curated demonstration, not a global dataset.</span><a href="#overview">Back to top <ArrowUpRight size={14}/></a></div>
- </footer>
+/** Public, responsive footer. Its internal links target existing app sections. */
+export default function SiteFooter() {
+  return (
+    <footer className="earthtrend-footer" aria-label="EarthTrend Detective website footer">
+      <div className="earthtrend-footer-glow earthtrend-footer-glow-left" aria-hidden="true" />
+      <div className="earthtrend-footer-glow earthtrend-footer-glow-right" aria-hidden="true" />
+      <div className="earthtrend-footer-inner">
+        <div className="earthtrend-footer-grid">
+          <div className="earthtrend-footer-identity">
+            <a href="#overview" className="earthtrend-footer-brand" aria-label="EarthTrend Detective — home">
+              <span className="earthtrend-footer-logo"><Earth size={23} aria-hidden="true" /></span>
+              <span>EarthTrend <span className="earthtrend-footer-brand-highlight">Detective</span></span>
+            </a>
+            <p className="earthtrend-footer-description">
+              Explore Earth. Investigate environmental change. Follow the evidence.
+              Discover meaningful insights from NASA Earth science observations through
+              transparent and data-driven research.
+            </p>
+            <div className="earthtrend-footer-tags">
+              <span className="earthtrend-footer-tag earthtrend-footer-tag-leaf"><Leaf size={13} aria-hidden="true" /> Environmental Research</span>
+              <span className="earthtrend-footer-tag earthtrend-footer-tag-satellite"><Satellite size={13} aria-hidden="true" /> NASA Data Insights</span>
+            </div>
+          </div>
+          {FOOTER_SECTIONS.map(section => (
+            <nav className="earthtrend-footer-column" aria-label={`${section.title} footer links`} key={section.title}>
+              <h2>{section.title}</h2>
+              <ul>{section.links.map(link => (
+                <li key={link.label}>
+                  <a href={link.href} {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{link.label}</a>
+                </li>
+              ))}</ul>
+            </nav>
+          ))}
+        </div>
+        <div className="earthtrend-footer-bottom">
+          <div className="earthtrend-footer-meta">
+            <p>© {new Date().getFullYear()} Tech_Innovators. All rights reserved.</p>
+            <div className="earthtrend-footer-credits">
+              <span>Built for a sustainable future</span>
+              <span className="earthtrend-footer-separator" aria-hidden="true">•</span>
+              <span>NASA Space Apps Challenge</span>
+              <span className="earthtrend-footer-separator" aria-hidden="true">•</span>
+              <span>Independent Research Project</span>
+            </div>
+          </div>
+          <p className="earthtrend-footer-disclaimer">
+            EarthTrend Detective is an independent project and is not affiliated with or endorsed by NASA.
+            Environmental trends and statistical associations presented here do not necessarily establish causation.
+            No account required for public read-only exploration.
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
 }
