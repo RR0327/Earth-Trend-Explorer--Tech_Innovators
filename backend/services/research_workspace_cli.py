@@ -3,6 +3,7 @@
 No public API writes or unauthenticated admin operations are introduced.
 """
 import argparse
+import sys
 import json
 from pathlib import Path
 
@@ -15,7 +16,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description='EarthTrend Detective local reproducible research workspace')
     commands = parser.add_subparsers(dest='command', required=True)
     build = commands.add_parser('build', help='Verify grids, extract several regions, persist immutable research run')
-    build.add_argument('--files', nargs='+', required=True, help='Trusted downloaded monthly NASA NetCDF files')
+    source = build.add_mutually_exclusive_group(required=True)
+    source.add_argument('--files', nargs='+', help='Trusted downloaded monthly NASA NetCDF files')
+    source.add_argument('--directory', help='Directory of trusted downloaded monthly .nc/.nc4 files (Windows-safe)')
     build.add_argument('--product', required=True,
                        choices=['gpm_3imergm_07_final','gldas_noah025_m_2_1_soil0_10','merra2_m2tmnxslv_t2m'])
     area = build.add_mutually_exclusive_group(required=True)
@@ -42,7 +45,15 @@ def main(argv=None):
                 regions = json.loads(Path(args.regions_json).read_text(encoding='utf-8'))
             urls = (json.loads(Path(args.source_urls_file).read_text(encoding='utf-8'))
                     if args.source_urls_file else None)
-            result = build_workspace(args.files,args.product,regions,urls,args.min_valid_fraction)
+            paths = args.files if args.files else sorted(
+                (p for p in Path(args.directory).iterdir() if p.is_file() and p.suffix.lower() in ('.nc', '.nc4')),
+                key=lambda p: p.name
+            )
+            if not paths:
+                raise ResearchValidationError('No .nc or .nc4 files found in selected directory')
+            if len(paths) > 500:
+                raise ResearchValidationError('Maximum 500 monthly files per research run')
+            result = build_workspace(paths,args.product,regions,urls,args.min_valid_fraction)
             status = store_workspace(args.database,result)
             export_workspace(result,args.export_json)
             print('RESEARCH WORKSPACE SUCCESS')
