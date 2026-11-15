@@ -219,3 +219,36 @@ def country_boundary_geometry(country_code: str):
     from services.country_boundaries import get_boundary
     try: return get_boundary(country_code)
     except KeyError: raise HTTPException(status_code=404,detail='Country boundary not present in packaged reference data')
+
+
+# Public research publication is opt-in and READ-ONLY. Source NetCDF ingestion
+# and write access remain restricted to the trusted local administrator CLI.
+@app.get('/api/research/history')
+def published_history(limit: int = 20, offset: int = 0):
+    from services.research_publication import publication_database, list_published, PublicationError
+    try:
+        return list_published(publication_database(), limit=limit, offset=offset)
+    except PublicationError as exc:
+        raise HTTPException(status_code=422 if str(exc)=='Invalid pagination' else 503, detail=str(exc))
+
+
+@app.get('/api/research/{research_id}')
+def published_research(research_id: str):
+    from services.research_publication import publication_database, get_published, PublicationError
+    try:
+        return get_published(publication_database(),research_id)
+    except PublicationError as exc:
+        raise HTTPException(status_code=404 if str(exc).startswith(('Invalid research','Research record')) else 503,detail=str(exc))
+
+
+@app.get('/api/research/{research_id}/report.pdf')
+def published_research_pdf(research_id: str):
+    from fastapi.responses import Response
+    from services.research_publication import publication_database,get_published,report_pdf,PublicationError
+    try:
+        report=report_pdf(get_published(publication_database(),research_id))
+    except PublicationError as exc:
+        raise HTTPException(status_code=404 if str(exc).startswith(('Invalid research','Research record')) else 503,detail=str(exc))
+    return Response(content=report,media_type='application/pdf',headers={
+        'Content-Disposition': f'attachment; filename="earthtrend-{research_id[:16]}.pdf"',
+        'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff'})
