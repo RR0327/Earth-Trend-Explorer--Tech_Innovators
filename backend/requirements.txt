@@ -8,3 +8,5 @@ numpy>=1.26,<3
 xarray>=2024.1,<2027
 netCDF4>=1.6,<2
 shapely>=2,<3
+
+reportlab>=4.0,<5
