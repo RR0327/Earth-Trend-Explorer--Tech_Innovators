@@ -18,7 +18,48 @@ def test_original_nasa_manifests():
         assert info['first_month']=='200001'
         assert info['last_month']=='202412'
         assert not info['missing_months']
-        assert inspect_downloads(info,base/name/uid)['missing_count']==300
+        # Download state is mutable local data, not a constant fixture.
+        # Check manifest metadata here; simulated download states are tested separately.
+        assert len(info['filenames']) == 300
+
+
+def test_download_presence_in_isolated_temporary_directory(tmp_path):
+    """A real workstation may have 0, some, or all files: test in isolation."""
+    base = Path(__file__).resolve().parents[1] / 'no-push' / 'nasa-downloads'
+    for product in ('IMERG', 'GLDAS'):
+        uid = JOBS[product]['id']
+        info = parse_manifest(base / product / f'subset_links_{uid}.txt', product)
+        directory = tmp_path / product
+        directory.mkdir()
+        first_month, first_file = next(iter(sorted(info['filenames'].items())))
+        before = inspect_downloads(info, directory)
+        assert before['present_count'] == 0
+        assert before['missing_count'] == 300
+        assert not before['ready_for_scientific_validation']
+
+        (directory / first_file).write_bytes(b'not-a-real-netcdf')
+        partial = inspect_downloads(info, directory)
+        assert partial['present_count'] == 1
+        assert partial['missing_count'] == 299
+        assert first_month not in partial['missing_months']
+        assert not partial['ready_for_scientific_validation']
+
+        (directory / first_file).write_bytes(b'')
+        empty = inspect_downloads(info, directory)
+        assert empty['present_count'] == 0
+        assert empty['zero_byte_count'] == 1
+        assert not empty['ready_for_scientific_validation']
+
+        (directory / first_file).write_bytes(b'not-a-real-netcdf')
+        for month, filename in info['filenames'].items():
+            if month != first_month:
+                (directory / filename).write_bytes(b'not-a-real-netcdf')
+        complete = inspect_downloads(info, directory)
+        assert complete['present_count'] == 300
+        assert complete['missing_count'] == 0
+        assert complete['zero_byte_count'] == 0
+        assert complete['ready_for_scientific_validation']
+        # Only file existence is tested; non-NetCDF bytes still require preflight.
 
 
 def test_manifest_rejects_untrusted_host(tmp_path):
