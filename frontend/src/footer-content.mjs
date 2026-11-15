@@ -5,7 +5,8 @@ export const FOOTER_SECTIONS = [
   {label:'Regional investigation',href:'#global'},
   {label:'Upload NASA observations',href:'#investigate'},
   {label:'Results and trend charts',href:'#analysis'},
-  {label:'Compare regions',href:'#compare'}]},
+  {label:'Compare regions',href:'#compare'},
+  {label:'Published research library',href:'#research'}]},
  {title:'DATA & SCIENCE',links:[
   {label:'NASA product catalogue',href:'#product-catalog'},
   {label:'Source provenance',href:'#sources'},
