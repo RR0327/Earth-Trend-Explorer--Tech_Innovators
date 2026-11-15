@@ -1,0 +1,9 @@
+{
+  "release": "Increment 12",
+  "new_files_sha256": {
+    "scripts/start-research-api.ps1": "0d54096e03c9bc2806f91d9622703430ead810be804dd6f5770698d7a416ed93",
+    "scripts/verify-release.ps1": "37cc2a1768fb1fe6282afa964ff194ecb1a385a4dbd98bac0a3860f9b5c7642e",
+    "docs/FINAL_SUBMISSION_INCREMENT12.md": "9e3892a769dcd27a4190cceaaec061fd6e44360010b3581b512e5369c4a2df7e"
+  },
+  "preserved": "Existing NASA and submitted snapshot unchanged; do not copy private downloads into Git"
+}

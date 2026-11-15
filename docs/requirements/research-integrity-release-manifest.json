@@ -1,0 +1,23 @@
+{
+  "increment": 8,
+  "baseline": "Increment 7",
+  "modified_files": [
+    "backend/main.py",
+    "backend/services/research_insights.py",
+    "backend/services/research_storage.py",
+    "backend/services/nasa_auth_check.py",
+    "backend/tests/research-integrity-research.py",
+    "backend/tests/test_nasa_auth_check.py",
+    "frontend/src/ResearchHistory.jsx",
+    "frontend/src/style.css"
+  ],
+  "guide_files": [
+    "backend/no-push/research-integrity-backend-windows-recovery.md",
+    "frontend/no-push/research-integrity-frontend-windows-guide.md"
+  ],
+  "backend_tests": 123,
+  "frontend_tests": 53,
+  "frontend_build": "unverified on this environment",
+  "source_data_modified": false,
+  "submitted_snapshot_modified": false
+}
